@@ -37,13 +37,12 @@ def decrypt_file(encrypted_file_path, private_key):
         )
     )
 
-    cipher = Cipher(algorithms.AES(symmetric_key), modes.OFB(symmetric_key[:16]), backend=default_backend())
+    cipher = Cipher(algorithms.AES(symmetric_key), modes.CFB(symmetric_key[:16]), backend=default_backend())
     decryptor = cipher.decryptor()
     decrypted_data = decryptor.update(ciphertext) + decryptor.finalize()
 
-    # Extract the filename from the path
     _, filename = os.path.split(encrypted_file_path)
-    decrypted_filename = 'decrypted_' + filename[:-4]  # Remove '.enc' and add 'decrypted_'
+    decrypted_filename = 'decrypted_' + filename[:-4]
 
     decrypted_file_path = os.path.join(os.path.dirname(encrypted_file_path), decrypted_filename)
 

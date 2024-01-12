@@ -46,10 +46,7 @@ def encrypt_file(file_path, public_key):
         )
     )
 
-    # Use algorithms.AES(symmetric_key) to create an instance of the AES algorithm
     aes_algorithm = algorithms.AES(symmetric_key)
-    
-    # Use modes.CFB(symmetric_key[:16]) for CFB mode
     cipher = Cipher(aes_algorithm, modes.CFB(symmetric_key[:16]), backend=default_backend())
     encryptor = cipher.encryptor()
     ciphertext = encryptor.update(plaintext) + encryptor.finalize()
@@ -62,7 +59,7 @@ def encrypt_file(file_path, public_key):
 
 if __name__ == "__main__":
     private_key, public_key = generate_key_pair()
-    
+
     save_key_to_file(private_key, 'private_key.pem')
     save_key_to_file(public_key, 'public_key.pem', is_private=False)
 
@@ -70,5 +67,9 @@ if __name__ == "__main__":
     files_to_encrypt = [f for f in os.listdir(folder_path) if os.path.isfile(os.path.join(folder_path, f))]
 
     for file_to_encrypt in files_to_encrypt:
+        # Skip files that are already encrypted
+        if file_to_encrypt.endswith('.enc'):
+            continue
+
         file_path = os.path.join(folder_path, file_to_encrypt)
         encrypt_file(file_path, public_key)
